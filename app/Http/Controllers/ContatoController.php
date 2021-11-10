@@ -14,7 +14,8 @@ class ContatoController extends Controller
      */
     public function index()
     {
-        return view('contato.index');
+        $contatos = Contato::all();
+        return view('contato.index',['contatos'=>$contatos]);
     }
 
     /**
@@ -24,7 +25,7 @@ class ContatoController extends Controller
      */
     public function create()
     {
-        //
+        return view('contato.create');
     }
 
     /**
@@ -35,7 +36,33 @@ class ContatoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request->nome);
+        $contato = new Contato;
+//        echo '<pre>'; var_dump($request); die;
+        $contato->nome = $request->nome;
+        $contato->email = $request->email;
+        $contato->data_nascimento = $request->data_nascimento;
+        $contato->anotacao = $request->anotacoes;
+
+        if ($request->hasFile('image') and $request->file('image')->isValid()){
+
+            $requestImage = $request->avatar;
+
+            $extension = $requestImage->extension();
+
+            $imageName = md5($requestImage->getClientOriginalName() . rand(100000, 999999)).".".$extension;
+
+            $requestImage->move(public_path('img/contatos'),$imageName);
+
+            $contato->avatar = $imageName;
+
+        }
+
+        $contato->save();
+
+        return redirect('/')->with('msg','Contato Cadastrado com Sucesso');
+//        $user = auth()->user();
+//        $telefone->contato_id = $user->id;
     }
 
     /**
@@ -46,7 +73,8 @@ class ContatoController extends Controller
      */
     public function show($id)
     {
-        return view('contato.show');
+        $contato = Contato::findOrFail($id);
+        return view('contato.show',['contato' => $contato]);
     }
 
     /**

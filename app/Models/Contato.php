@@ -10,6 +10,7 @@ class Contato extends Model
     protected $fillable = [
       'nome','email','data_nascimento','avatar','anotacao'
     ];
+
     use HasFactory;
 
     public function telefones()

@@ -19,4 +19,8 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 
 Route::group(['middleware'=>'auth'],function () {
     Route::get('/contato',[\App\Http\Controllers\ContatoController::class, 'index'])->name('contatos');
+    Route::get('/contato/create',[\App\Http\Controllers\ContatoController::class, 'create'])->name('createContatos');
+    Route::get('/contato/{id}',[\App\Http\Controllers\ContatoController::class, 'show'])->name('showContato');
+    Route::post('/contato',[\App\Http\Controllers\ContatoController::class, 'store'])->name('storeContatos');
+
 });
