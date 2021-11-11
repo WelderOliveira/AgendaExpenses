@@ -13,7 +13,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Crie um Evento</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -23,8 +23,8 @@
                     <form action="" id="form" name="form">
                         @csrf
                         <div class="form-group">
-                            <label for="id">ID</label>
-                            <input type="text" class="form-control" id="id" name="id" aria-describedby="">
+{{--                            <label for="id">ID</label>--}}
+                            <input type="hidden" class="form-control" id="id" name="id" aria-describedby="">
                             {{--                            <small class=" form-text text-muted" id="helpId">Help Text</small>--}}
                         </div>
 
@@ -41,14 +41,14 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="start">Start</label>
-                            <input type="text" class="form-control" id="start" name="start" aria-describedby="">
+                            <label for="start">Data Inicio</label>
+                            <input type="date" class="form-control" id="start" name="start" aria-describedby="">
                             {{--                            <small class=" form-text text-muted" id="helpId">Help Text</small>--}}
                         </div>
 
                         <div class="form-group">
-                            <label for="end">End</label>
-                            <input type="text" class="form-control" id="end" name="end" aria-describedby="">
+                            <label for="end">Data Fim</label>
+                            <input type="date" class="form-control" id="end" name="end" aria-describedby="">
                             {{--                            <small class=" form-text text-muted" id="helpId">Help Text</small>--}}
                         </div>
                     </form>

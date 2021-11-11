@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
         axios.post("/calendario",dados).
         then(
             (response)=> {
-                agenda.refetchEvents();
+                calendar.refetchEvents();
                 $('#evento').modal("hide");
             }
         ).catch(
