@@ -114,7 +114,7 @@ function save() {
     var formData = new FormData();
     formData.append('nome', $('#nome').val());
     formData.append('email', $('#email').val());
-    formData.append('dt_nascimento', $('#data_nascimento').val());
+    formData.append('data_nascimento', $('#data_nascimento').val());
     formData.append('anotacao', $('#anotacoes').val());
     formData.append('cep', $('#cep').val());
     formData.append('localidade', $('#localidade').val());
@@ -125,33 +125,19 @@ function save() {
     formData.append('telefones', JSON.stringify(TelsAdicionais));
     formData.append('avatar', $('input[type=file]')[0].files[0]);
 
-    // var data = {
-    //     nome: $('#nome').val(),
-    //     email: $('#email').val(),
-    //     dt_nascimento: $('#data_nascimento').val(),
-    //     anotacao: $('#anotacoes').val(),
-    //     cep: $('#cep').val(),
-    //     localidade: $('#localidade').val(),
-    //     uf: $('#uf').val(),
-    //     bairro: $('#bairro').val(),
-    //     logradouro: $('#logradouro').val(),
-    //     complemento: $('#complemento').val(),
-    //     telefones: TelsAdicionais,
-    //     avatar: $('input[type=file]')[0].files[0]
-    // }
-
+    var id = $('.id').val();
     console.log(formData)
     // console.log(avatar)
     $.ajax({
-        url: "/agenda",
-        type: "POST",
+        url: "/agenda/update/"+id,
+        type: "PUT",
         data: formData,
         processData: false,
-        contentType: false,
+        // contentType: false,
         success: function (response) {
             $('#submit').html('Submit');
             $("#submit").attr("disabled", false);
-            alert('Registro Salvo com Sucesso!');
+            alert('Registro Atualizado com Sucesso!');
             document.getElementById("form").reset();
         },
         error: function (response) {

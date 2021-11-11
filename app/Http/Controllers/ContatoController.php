@@ -16,8 +16,26 @@ class ContatoController extends Controller
      */
     public function index()
     {
-        $contatos = Contato::all()->sortBy('nome');
-        return view('contato.index', ['contatos' => $contatos]);
+        $search = request('search');
+
+        if ($search){
+            $contatos = Contato::where([
+                ['nome','like','%'.$search.'%']
+            ])->get();
+        }else{
+            $contatos = Contato::all()->sortBy('nome');
+        }
+
+        return view('agenda.index', ['contatos' => $contatos,'search'=>$search]);
+    }
+
+    public function autocompleteSearch(Request $request)
+    {
+        $query = $request->get('query');
+        $filterResult = Contato::where([
+            ['nome','like','%'.$query.'%']
+        ])->get();
+        return response()->json($filterResult);
     }
 
     /**
@@ -27,7 +45,7 @@ class ContatoController extends Controller
      */
     public function create()
     {
-        return view('contato.create');
+        return view('agenda.create');
     }
 
     /**
@@ -38,41 +56,16 @@ class ContatoController extends Controller
      */
     public function store(Request $request)
     {
-//        dd($request);
         $validator = $request->validate([
             'nome' => 'required|max:100',
             'email' => 'email|max:200|unique:contatos',
             'telefones' => 'required',
+            'cep'=>'required',
             'avatar' => 'nullable|sometimes|image|mimes:jpg,jpeg,png,gif'
 
         ]);
 
-        $contato = new Contato;
-//        echo '<pre>'; var_dump($request); die;
-        $contato->nome = $request->nome;
-        $contato->email = $request->email;
-        $contato->data_nascimento = $request->dt_nascimento;
-        $contato->anotacao = $request->anotacoes;
-
-//        dd($request->avatar);
-
-        if ($request->hasFile('avatar') and $request->file('avatar')->isValid()) {
-
-            $requestImage = $request->avatar;
-
-            $extension = $requestImage->extension();
-
-            $imageName = md5($requestImage->getClientOriginalName() . rand(100000, 999999)) . "." . $extension;
-
-            $requestImage->move(public_path('img/contatos'), $imageName);
-
-            $contato->avatar = $imageName;
-
-        }
-
-        $contato->save();
-        $userCadastrado = $contato->id;
-
+        $userCadastrado = $this->saveContato($request);
         $this->saveEndereco($request, $userCadastrado);
         $this->saveTelefone($request, $userCadastrado);
 
@@ -91,7 +84,7 @@ class ContatoController extends Controller
         $dadosContato = Contato::findOrFail($id);
         $foneContato = Telefone::where('contato_id', $dadosContato->id)->get()->toArray();
         $enderecoContato = Endereco::where('contato_id', $dadosContato->id)->first()->toArray();
-        return view('contato.show', ['contato' => $dadosContato, 'fones' => $foneContato, 'endereco' => $enderecoContato]);
+        return view('agenda.show', ['contato' => $dadosContato, 'fones' => $foneContato, 'endereco' => $enderecoContato]);
     }
 
     /**
@@ -102,7 +95,10 @@ class ContatoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $contato = Contato::FindOrFail($id);
+        $foneContato = Telefone::where('contato_id', $id)->get()->toArray();
+        $enderecoContato = Endereco::where('contato_id', $id)->first()->toArray();
+        return view('agenda.edit', ['contato' => $contato, 'fones' => $foneContato, 'endereco' => $enderecoContato]);
     }
 
     /**
@@ -114,7 +110,10 @@ class ContatoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->updateContato($request,$id);
+        Telefone::where('contato_id', $id)->update($request->all());
+        Endereco::where('contato_id', $id)->update($request->all());
+//        return redirect('/agenda')->with('msg', 'Contato Excluido Com Sucesso');
     }
 
     /**
@@ -128,26 +127,38 @@ class ContatoController extends Controller
         Contato::findOrFail($id)->delete();
         Telefone::where('contato_id', $id)->delete();
         Endereco::where('contato_id', $id)->delete();
-        return redirect('/contato')->with('msg','Contato Excluido Com Sucesso');
+        return redirect('/')->with('msg', 'Contato Excluido Com Sucesso');
+    }
+
+    public function updateContato($dados,$id)
+    {
+        $contato = Contato::findOrFail($id);
+
+        $contato = $this->dadosContatos($dados, $contato);
+
+        $contato->update();
+//        return $agenda->id;
+    }
+
+    public function saveContato($dados)
+    {
+        $contato = new Contato;
+
+        $contato = $this->dadosContatos($dados, $contato);
+
+        $contato->save();
+        return $contato->id;
     }
 
     /**
      * @param $dados
+     * @param $usuario
      */
     public function saveEndereco($dados, $usuario)
     {
         $dadosEndereco = new Endereco;
 
-        $dadosEndereco->cep = $dados->cep;
-        $dadosEndereco->bairro = $dados->bairro;
-        $dadosEndereco->logradouro = $dados->logradouro;
-        $dadosEndereco->uf = $dados->uf;
-        $dadosEndereco->localidade = $dados->localidade;
-        $dadosEndereco->complemento = $dados->complemento;
-        $dadosEndereco->contato_id = $usuario;
-
-
-//        echo '<pre>'; var_dump($dadosEndereco); die;
+        $dadosEndereco = $this->dadosEndereco($dados, $dadosEndereco, $usuario);
 
         $dadosEndereco->save();
     }
@@ -167,5 +178,53 @@ class ContatoController extends Controller
         }
 //            dd($dados->telefones);
     }
+
+    /**
+     * @param $dados
+     * @param Contato $contato
+     * @return Contato
+     */
+    public function dadosContatos($dados, Contato $contato): Contato
+    {
+        $contato->nome = $dados->nome;
+        $contato->email = $dados->email;
+        $contato->data_nascimento = $dados->dt_nascimento;
+        $contato->anotacao = $dados->anotacoes;
+
+        if ($dados->hasFile('avatar') and $dados->file('avatar')->isValid()) {
+
+            $requestImage = $dados->avatar;
+
+            $extension = $requestImage->extension();
+
+            $imageName = md5($requestImage->getClientOriginalName() . rand(100000, 999999)) . "." . $extension;
+
+            $requestImage->move(public_path('img/contatos'), $imageName);
+
+            $contato->avatar = $imageName;
+
+        }
+        return $contato;
+    }
+
+    /**
+     * @param $dados
+     * @param Endereco $Endereco
+     * @param $usuario
+     * @return Endereco
+     */
+    public function dadosEndereco($dados, Endereco $Endereco, $usuario): Endereco
+    {
+        $Endereco->cep = $dados->cep;
+        $Endereco->bairro = $dados->bairro;
+        $Endereco->logradouro = $dados->logradouro;
+        $Endereco->uf = $dados->uf;
+        $Endereco->localidade = $dados->localidade;
+        $Endereco->complemento = $dados->complemento;
+        $Endereco->contato_id = $usuario;
+
+        return $Endereco;
+    }
+
 
 }

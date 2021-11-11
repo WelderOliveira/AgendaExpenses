@@ -11,6 +11,8 @@ class Contato extends Model
       'nome','email','data_nascimento','avatar','anotacao'
     ];
 
+    protected $dates = ['data_nascimento'];
+
     use HasFactory;
 
     public function telefones()

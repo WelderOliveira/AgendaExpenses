@@ -64,6 +64,15 @@
                         @endforeach
                         <div class="row">
                             <div class="col-sm-3">
+                                <p class="mb-0">Nascimento</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{{ ($contato->data_nascimento)->format('d/m/Y') }}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
                                 <p class="mb-0">CEP</p>
                             </div>
                             <div class="col-sm-9">
