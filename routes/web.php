@@ -23,6 +23,7 @@ Route::group(['middleware'=>'auth'],function () {
     Route::get('/contato/{id}',[\App\Http\Controllers\ContatoController::class, 'show'])->name('showContato');
     Route::post('/contato',[\App\Http\Controllers\ContatoController::class, 'store'])->name('storeContatos');
     Route::get('/contato/edit/{id}',[\App\Http\Controllers\ContatoController::class, 'edit'])->name('editContato');
+    Route::delete('/contato/{id}',[\App\Http\Controllers\ContatoController::class, 'destroy'])->name('destroyContato');
 
 
 });

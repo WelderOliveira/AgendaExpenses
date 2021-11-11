@@ -16,7 +16,7 @@ class ContatoController extends Controller
      */
     public function index()
     {
-        $contatos = Contato::all();
+        $contatos = Contato::all()->sortBy('nome');
         return view('contato.index', ['contatos' => $contatos]);
     }
 
@@ -125,7 +125,10 @@ class ContatoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Contato::findOrFail($id)->delete();
+        Telefone::where('contato_id', $id)->delete();
+        Endereco::where('contato_id', $id)->delete();
+        return redirect('/contato')->with('msg','Contato Excluido Com Sucesso');
     }
 
     /**

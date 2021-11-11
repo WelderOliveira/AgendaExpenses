@@ -14,9 +14,18 @@
                         <div class="d-flex justify-content-center mb-2">
                             <a href="{{route('editContato', $contato->id)}}" class="btn btn-outline-primary mx-2">
                                 <i class="fas fa-user-edit"></i></a>
+
                             <a href="https://wa.me/@if($fones){{$fones[0]['numero']}}@else#@endif"
                                class="btn btn-outline-primary ms-1 mx-2">
                                 <i class="fab fa-whatsapp"></i></a>
+
+                            <form action="{{route('destroyContato',$contato->id)}}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-outline-danger mx-2">
+                                    <i class="far fa-trash-alt"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
