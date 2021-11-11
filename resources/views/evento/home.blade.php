@@ -7,11 +7,6 @@
         </div>
     </div>
 
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#evento">
-        Launch demo modal
-    </button>
-
     <!-- Modal -->
     <div class="modal fade" id="evento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          aria-hidden="true">
@@ -30,17 +25,17 @@
                         <div class="form-group">
                             <label for="id">ID</label>
                             <input type="text" class="form-control" id="id" name="id" aria-describedby="">
-                            <small class=" form-text text-muted" id="helpId">Help Text</small>
+                            {{--                            <small class=" form-text text-muted" id="helpId">Help Text</small>--}}
                         </div>
 
                         <div class="form-group">
-                            <label for="title"></label>
+                            <label for="title">Titulo do Evento</label>
                             <input type="text" class="form-control" id="title" name="title" aria-describedby="">
-                            <small class=" form-text text-muted" id="helpId">Help Text</small>
+                            {{--                            <small class=" form-text text-muted" id="helpId">Help Text</small>--}}
                         </div>
 
                         <div class="form-group">
-                            <label for="descricao"></label>
+                            <label for="descricao">Descrição do Evento</label>
                             <textarea name="descricao" id="descricao" cols="30" rows="10"
                                       class="form-control"></textarea>
                         </div>
@@ -48,13 +43,13 @@
                         <div class="form-group">
                             <label for="start">Start</label>
                             <input type="text" class="form-control" id="start" name="start" aria-describedby="">
-                            <small class=" form-text text-muted" id="helpId">Help Text</small>
+                            {{--                            <small class=" form-text text-muted" id="helpId">Help Text</small>--}}
                         </div>
 
                         <div class="form-group">
                             <label for="end">End</label>
                             <input type="text" class="form-control" id="end" name="end" aria-describedby="">
-                            <small class=" form-text text-muted" id="helpId">Help Text</small>
+                            {{--                            <small class=" form-text text-muted" id="helpId">Help Text</small>--}}
                         </div>
                     </form>
 
