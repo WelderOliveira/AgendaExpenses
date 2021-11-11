@@ -9,21 +9,21 @@ $(document).ready(function ($) {
         var Dados = $(this).serialize();
         var cep = $('#cep').val();
 
-        cep = cep.replace(".","");
-        cep = cep.replace("-","");
+        cep = cep.replace(".", "");
+        cep = cep.replace("-", "");
 
         $.ajax({
-            url: 'https://viacep.com.br/ws/'+cep+'/json/',
+            url: 'https://viacep.com.br/ws/' + cep + '/json/',
             method: 'get',
-            dataType:'json',
+            dataType: 'json',
             data: Dados,
-            success:function (Dados){
+            success: function (Dados) {
                 $('#logradouro').val(Dados.logradouro);
                 $('#bairro').val(Dados.bairro);
                 $('#uf').val(Dados.uf);
                 $('#localidade').val(Dados.localidade);
             },
-            error:function (Dados){
+            error: function (Dados) {
                 alert('Não encontrei nenhum informação sobre o CEP informado, insira os dados manualmente')
                 $('#cep').focus();
             }
@@ -40,7 +40,7 @@ function addTelAdicional() {
     var indexTelInput = $("<input>");
 
     indexTelInput.attr('type', 'hidden');
-    indexTelInput.attr('id', 'indexTel-'+index);
+    indexTelInput.attr('id', 'indexTel-' + index);
     indexTelInput.addClass('form-control TelsAdicionais');
     indexTelInput.attr('value', index);
 
@@ -84,7 +84,7 @@ function delTelAdicional(index) {
     $("#acaoTelAdicional-" + index).remove();
 }
 
-function save(){
+function save() {
 
     $.ajaxSetup({
         headers: {
@@ -93,13 +93,13 @@ function save(){
     });
 
     $('#submit').html('Please Wait...');
-    $("#submit"). attr("disabled", true);
+    $("#submit").attr("disabled", true);
 
     var TelsAdicionais = [];
     $(".TelsAdicionais").each(function () {
 
         var index = $(this).val();
-        var Tel = $("#TelAdicional-"+index).val();
+        var Tel = $("#TelAdicional-" + index).val();
 
         if (Tel) {
             var TelsAdicionaisObject = {
@@ -111,30 +111,63 @@ function save(){
         }
     });
 
-    var data = {
-        nome: $('#nome').val(),
-        email: $('#email').val(),
-        dt_nascimento: $('#data_nascimento').val(),
-        avatar: $('#avatar').val(),
-        anotacao: $('#anotacoes').val(),
-        cep: $('#cep').val(),
-        cidade: $('#localidade').val(),
-        uf: $('#uf').val(),
-        bairro: $('#bairro').val(),
-        logradouro: $('#logradouro').val(),
-        complemento: $('#complemento').val(),
-        telefones: TelsAdicionais
-    }
+    var formData = new FormData();
+    formData.append('nome', $('#nome').val());
+    formData.append('email', $('#email').val());
+    formData.append('dt_nascimento', $('#data_nascimento').val());
+    formData.append('anotacao', $('#anotacoes').val());
+    formData.append('cep', $('#cep').val());
+    formData.append('localidade', $('#localidade').val());
+    formData.append('uf', $('#uf').val());
+    formData.append('bairro', $('#bairro').val());
+    formData.append('logradouro', $('#logradouro').val());
+    formData.append('complemento', $('#complemento').val());
+    formData.append('telefones', JSON.stringify(TelsAdicionais));
+    formData.append('avatar', $('input[type=file]')[0].files[0]);
 
+    // var data = {
+    //     nome: $('#nome').val(),
+    //     email: $('#email').val(),
+    //     dt_nascimento: $('#data_nascimento').val(),
+    //     anotacao: $('#anotacoes').val(),
+    //     cep: $('#cep').val(),
+    //     localidade: $('#localidade').val(),
+    //     uf: $('#uf').val(),
+    //     bairro: $('#bairro').val(),
+    //     logradouro: $('#logradouro').val(),
+    //     complemento: $('#complemento').val(),
+    //     telefones: TelsAdicionais,
+    //     avatar: $('input[type=file]')[0].files[0]
+    // }
+
+    console.log(formData)
+    // console.log(avatar)
     $.ajax({
         url: "/contato",
-        type:"POST",
-        data:data,
-        success:function (response){
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
             $('#submit').html('Submit');
-            $("#submit"). attr("disabled", false);
-            alert('Ajax form has been submitted successfully');
+            $("#submit").attr("disabled", false);
+            alert('Registro Salvo com Sucesso!');
             document.getElementById("form").reset();
+        },
+        error: function (response) {
+            var errors = response.responseJSON;
+            console.log(errors.errors);
+
+            errorsHtml = '';
+            $.each(errors.errors, function (k, v) {
+                errorsHtml += v + '\n';
+            });
+            errorsHtml += '';
+
+            alert(
+                errorsHtml
+            )
+
         }
     })
     // console.log(data)

@@ -83,6 +83,16 @@
         </div>
     </nav>
 
+    @if ($errors->any())
+        <div class="alert alert-danger" id="form-errors" name="form-errors">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <main class="py-4">
         @if(session('msg'))
             <p class="msg">{{ session('msg') }}</p>

@@ -14,10 +14,6 @@
                 <label for="nome">Nome:</label>
                 <input type="text" id="nome" name="nome" class="form-control">
             </div>
-            <div class="form-group">
-                <label for="telefone">Número de Telefone</label>
-                <input type="text" id="telefone" name="telefone" class="form-control">
-            </div>
 
             <div class="form-group">
                 <div class="col-md-2 col-sm-12">
@@ -44,7 +40,6 @@
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" class="form-control">
             </div>
-
 
             <div class="form-group">
                 <label for="data_nascimento">Data de Nascimento</label>
@@ -121,7 +116,7 @@
 
             {{--            <input type="submit" class="btn btn-primary">--}}
             <div class="col-sm-6 ">
-                <button class="btn btn-primary pull-right" onclick="save()" type="button"><i
+                <button class="btn btn-primary pull-right" onclick="save()" id="submit" name="submit" type="button"><i
                         class="fa fa-save"> </i> Salvar Novo Contato
                 </button>
             </div>
