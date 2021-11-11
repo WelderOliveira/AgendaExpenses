@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/calendario', [\App\Http\Controllers\AgendaController::class, 'index'])->name('indexCalendario')->middleware('auth');
+Route::get('/calendario/view', [\App\Http\Controllers\AgendaController::class, 'show'])->name('showCalendario')->middleware('auth');
+Route::post('/calendario', [\App\Http\Controllers\AgendaController::class, 'store'])->name('storeCalendario')->middleware('auth');
 
 Route::group(['middleware'=>'auth'],function () {
     Route::get('/',[\App\Http\Controllers\ContatoController::class, 'index'])->name('contatos');
