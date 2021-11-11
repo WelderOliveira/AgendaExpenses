@@ -17,7 +17,7 @@ class ContatoController extends Controller
     public function index()
     {
         $contatos = Contato::all();
-        return view('contato.index',['contatos'=>$contatos]);
+        return view('contato.index', ['contatos' => $contatos]);
     }
 
     /**
@@ -33,15 +33,15 @@ class ContatoController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
 //        dd($request);
         $validator = $request->validate([
-            'nome'=>'required|max:100',
-            'email'=>'email|max:200|unique:contatos',
+            'nome' => 'required|max:100',
+            'email' => 'email|max:200|unique:contatos',
             'telefones' => 'required',
             'avatar' => 'nullable|sometimes|image|mimes:jpg,jpeg,png,gif'
 
@@ -56,15 +56,15 @@ class ContatoController extends Controller
 
 //        dd($request->avatar);
 
-        if ($request->hasFile('avatar') and $request->file('avatar')->isValid()){
+        if ($request->hasFile('avatar') and $request->file('avatar')->isValid()) {
 
             $requestImage = $request->avatar;
 
             $extension = $requestImage->extension();
 
-            $imageName = md5($requestImage->getClientOriginalName() . rand(100000, 999999)).".".$extension;
+            $imageName = md5($requestImage->getClientOriginalName() . rand(100000, 999999)) . "." . $extension;
 
-            $requestImage->move(public_path('img/contatos'),$imageName);
+            $requestImage->move(public_path('img/contatos'), $imageName);
 
             $contato->avatar = $imageName;
 
@@ -73,8 +73,8 @@ class ContatoController extends Controller
         $contato->save();
         $userCadastrado = $contato->id;
 
-        $this->saveEndereco($request,$userCadastrado);
-        $this->saveTelefone($request,$userCadastrado);
+        $this->saveEndereco($request, $userCadastrado);
+        $this->saveTelefone($request, $userCadastrado);
 
 //        return redirect('/')->with('msg','Contato Cadastrado com Sucesso');
 
@@ -83,19 +83,21 @@ class ContatoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $contato = Contato::findOrFail($id);
-        return view('contato.show',['contato' => $contato]);
+        $dadosContato = Contato::findOrFail($id);
+        $foneContato = Telefone::where('contato_id', $dadosContato->id)->get()->toArray();
+        $enderecoContato = Endereco::where('contato_id', $dadosContato->id)->first()->toArray();
+        return view('contato.show', ['contato' => $dadosContato, 'fones' => $foneContato, 'endereco' => $enderecoContato]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -106,8 +108,8 @@ class ContatoController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -118,7 +120,7 @@ class ContatoController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -147,7 +149,6 @@ class ContatoController extends Controller
         $dadosEndereco->save();
     }
 
-
     /**
      * @param $dados
      * @param int $usuario
@@ -155,12 +156,12 @@ class ContatoController extends Controller
     public function saveTelefone($dados, $usuario)
     {
         $dadosTelefone = new Telefone;
-        $numerosTelefone = json_decode($dados->telefones,true);
-            foreach ($numerosTelefone as $telefone){
-                $dadosTelefone->numero = $telefone["Tel"];
-                $dadosTelefone->contato_id = $usuario;
-                $dadosTelefone->save();
-            }
+        $numerosTelefone = json_decode($dados->telefones, true);
+        foreach ($numerosTelefone as $telefone) {
+            $dadosTelefone->numero = $telefone["Tel"];
+            $dadosTelefone->contato_id = $usuario;
+            $dadosTelefone->save();
+        }
 //            dd($dados->telefones);
     }
 
